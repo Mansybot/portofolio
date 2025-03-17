@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Mans</title>
+  <meta name="description" content="Portofolio modern, interaktif, dan responsif.">
+  <style>
+    /* === RESET & BASE STYLES === */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a {
+      text-decoration: none;
+      color: var(--primary-color);
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    /* === THEME VARIABLES === */
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --primary-color: #007acc;
+      --secondary-color: #e2e2e2;
+    }
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --primary-color: #0096ff;
+      --secondary-color: #333333;
+    }
+    /* === HEADER & NAVIGATION === */
+    header {
+      background: var(--secondary-color);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      font-size: 1.5rem;
+    }
+    nav {
+      display: inline-block;
+    }
+    .nav-link {
+      margin: 0 0.5rem;
+      cursor: pointer;
+      padding-bottom: 2px;
+    }
+    .nav-link.active {
+      font-weight: bold;
+      border-bottom: 2px solid var(--primary-color);
+    }
+    .theme-toggle {
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      padding: 0.5rem;
+      color: var(--text-color);
+    }
+    /* === CONTAINER & SECTIONS === */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .content-section {
+      margin: 2rem 0;
+    }
+    .hidden {
+      display: none;
+    }
+    /* === PROJECTS GRID & CARD STYLE === */
+    .filter-btns {
+      margin-bottom: 1rem;
+    }
+    .filter-btns button {
+      margin-right: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: var(--primary-color);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .filter-btns button.active {
+      background: #005f99;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .project-card {
+      background: var(--secondary-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .project-card:hover {
+      transform: translateY(-5px);
+    }
+    .project-info {
+      padding: 0.5rem;
+    }
+    /* === FOOTER === */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: var(--secondary-color);
+    }
+    /* === RESPONSIVE ADJUSTMENTS === */
+    @media (max-width: 768px) {
+      header, .container, footer {
+        padding: 0.5rem;
+      }
+      .theme-toggle {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <!-- HEADER & NAVIGATION -->
+  <header>
+    <h1>Portfolio Mans</h1>
+    <nav>
+      <span class="nav-link active" data-section="home">Home</span>
+      <span class="nav-link" data-section="about">About</span>
+      <span class="nav-link" data-section="projects">Projects</span>
+      <span class="nav-link" data-section="contact">Contact</span>
+    </nav>
+    <button class="theme-toggle" id="theme-toggle">Toggle Theme</button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="container">
+    <!-- Home Section -->
+    <section id="home" class="content-section">
+      <h2>Welcome</h2>
+      <p>Selamat datang di portofolio saya. Jelajahi dan temukan proyek-proyek terbaik yang saya kerjakan!</p>
+    </section>
+    <!-- About Section -->
+    <section id="about" class="content-section hidden">
+      <h2>About Me</h2>
+      <p>Saya adalah seorang pengembang web dengan pengalaman luas di bidang desain modern dan teknologi terkini.</p>
+    </section>
+    <!-- Projects Section -->
+    <section id="projects" class="content-section hidden">
+      <h2>Projects</h2>
+      <div class="filter-btns">
+        <button data-filter="all" class="filter-btn active">All</button>
+        <button data-filter="web" class="filter-btn">Web</button>
+        <button data-filter="mobile" class="filter-btn">Mobile</button>
+        <button data-filter="other" class="filter-btn">Other</button>
+      </div>
+      <div class="projects-grid" id="projects-grid">
+        <!-- Proyek akan di-render secara dinamis melalui GitHub API -->
+      </div>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="content-section hidden">
+      <h2>Contact</h2>
+      <p>Hubungi saya melalui email: <a href="mailto:email@example.com">email@example.com</a></p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2025 Mans. All rights reserved.</p>
+  </footer>
+
+  <script>
+    /* === MODULE: THEME TOGGLE === */
+    (function() {
+      const toggleBtn = document.getElementById('theme-toggle');
+      const body = document.body;
+      toggleBtn.addEventListener('click', () => {
+        const current = body.getAttribute('data-theme');
+        body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+      });
+    })();
+
+    /* === MODULE: SPA NAVIGATION === */
+    (function() {
+      const navLinks = document.querySelectorAll('.nav-link');
+      const sections = document.querySelectorAll('.content-section');
+
+      function showSection(sectionId) {
+        sections.forEach(section => {
+          section.classList.toggle('hidden', section.id !== sectionId);
+        });
+      }
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.forEach(lnk => lnk.classList.remove('active'));
+          link.classList.add('active');
+          const sectionId = link.getAttribute('data-section');
+          showSection(sectionId);
+          history.pushState(null, '', '#' + sectionId);
+        });
+      });
+      // Handle back/forward navigation
+      window.addEventListener('popstate', () => {
+        const hash = location.hash.replace('#', '') || 'home';
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('data-section') === hash);
+        });
+        showSection(hash);
+      });
+      // Inisialisasi tampilan berdasarkan URL hash
+      document.addEventListener('DOMContentLoaded', () => {
+        const hash = location.hash.replace('#', '') || 'home';
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('data-section') === hash);
+        });
+        showSection(hash);
+      });
+    })();
+
+    /* === MODULE: FETCH GITHUB REPOSITORIES & RENDER PROJECTS === */
+    (function() {
+      const projectsGrid = document.getElementById('projects-grid');
+      const githubUsername = 'octocat'; // Ganti dengan username GitHub Anda
+      const repoCache = {};
+
+      async function fetchRepos() {
+        if (repoCache.githubRepos) return repoCache.githubRepos;
+        try {
+          const res = await fetch(`https://api.github.com/users/${githubUsername}/repos`);
+          const repos = await res.json();
+          repoCache.githubRepos = repos;
+          return repos;
+        } catch (err) {
+          console.error('Error fetching repos:', err);
+          return [];
+        }
+      }
+
+      function renderProjects(repos) {
+        // Di sini kita render setiap repo sebagai card. Untuk demo, semua repos diberi tipe "web".
+        projectsGrid.innerHTML = repos.map(repo => `
+          <div class="project-card" data-type="web">
+            <img src="https://via.placeholder.com/400x200?text=${encodeURIComponent(repo.name)}" alt="${repo.name}" loading="lazy">
+            <div class="project-info">
+              <h3>${repo.name}</h3>
+              <p>${repo.description || 'No description provided.'}</p>
+              <a href="${repo.html_url}" target="_blank">View Repository</a>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      async function initProjects() {
+        const repos = await fetchRepos();
+        renderProjects(repos);
+      }
+      // Inisialisasi saat DOM siap
+      document.addEventListener('DOMContentLoaded', initProjects);
+    })();
+
+    /* === MODULE: PROJECT FILTERING === */
+    (function() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const projectsGrid = document.getElementById('projects-grid');
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Update tombol filter aktif
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          const filterValue = button.getAttribute('data-filter');
+          const projectCards = projectsGrid.querySelectorAll('.project-card');
+          projectCards.forEach(card => {
+            const type = card.getAttribute('data-type');
+            card.style.display = (filterValue === 'all' || type === filterValue) ? 'block' : 'none';
+          });
+        });
+      });
+    })();
+  </script>
+
+  <!-- === README Documentation ===
+  
+  # Portfolio Mans
+
+  Portfolio website yang sangat advanced, terstruktur, modular, dan siap produksi.
+
+  ## Fitur Utama
+  - **Desain Modern & Interaktif:** Custom CSS dengan transisi smooth dan responsive design.
+  - **Dark & Light Mode:** Toggle mode dengan animasi transisi.
+  - **SPA Navigation:** Tanpa reload halaman, menggunakan vanilla JavaScript.
+  - **Fetch API:** Mengambil repositori GitHub secara otomatis (ganti variabel `githubUsername`).
+  - **Optimasi Performa:** Lazy loading gambar dan caching sederhana.
+  - **Filter Proyek:** Filter untuk menampilkan proyek berdasarkan kategori.
+  
+  ## Struktur File
+  Karena semua kode berada dalam 1 file, struktur file-nya adalah:
